@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  mailproducer:
+    build:
+      context: .
+      dockerfile: Producer-Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    ports:
+      - '30038:30038'
+
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+    ports:
+            # AMQP protocol port
+      - '5672:5672'
+            # HTTP management UI
+      - '15672:15672'
+
+  # mailconsumer:
+  #   build:
+  #     dockerfile: Consumer-Dockerfile
+  #   container_name: consumer
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: "Development"
+  #   ports:
+  #     - 30039:30039
+
+  # mongodb:
+  #   image: mongo
+  #   container_name: mongodb
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   volumes:
+  #     - /C:/Data/db
+  #   ports:
+  #     - 27017:2017
+  #   restart: unless-stopped

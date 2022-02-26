@@ -1,0 +1,24 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY ["MailProducer/MailProducer.csproj", "MailProducer/"]
+COPY ["ProducerBusiniess/ProducerBusiniess.csproj", "ProducerBusiniess/"]
+COPY ["Data/Data.csproj", "Data/"]
+COPY ["DataAccess/DataAccess.csproj", "DataAccess/"]
+RUN dotnet restore "MailProducer/MailProducer.csproj"
+COPY . .
+WORKDIR "/src/MailProducer"
+RUN dotnet build "MailProducer.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "MailProducer.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "MailProducer.dll"]
