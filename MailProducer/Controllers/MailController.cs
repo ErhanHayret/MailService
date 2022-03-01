@@ -8,6 +8,7 @@ using ProducerBusiniess.RabbitMQBusiniess;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace MailProducer.Controllers
 {
@@ -15,6 +16,12 @@ namespace MailProducer.Controllers
     [Route("[controller]")]
     public class MailController : ControllerBase
     {
+        ILogger<MailController> _logger;
+        public MailController(ILogger<MailController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet("GetMail")]
         public Task<IEnumerable<MailDto>> GetMail()
         {
@@ -22,6 +29,7 @@ namespace MailProducer.Controllers
             IRepository<MailDto> _repository = new Repository<MailDto>(context);
             return _repository.GetAll();
         }
+
         [HttpGet("GetById")]
         public IActionResult GetById(string id)
         {
@@ -29,6 +37,7 @@ namespace MailProducer.Controllers
             IRepository<MailDto> _repository = new Repository<MailDto>(context);
             return Ok(_repository.Get(id).Result);
         }
+
         [HttpPost("SendMail")]
         public IActionResult SendMail(Mail mail)
         {
@@ -40,6 +49,7 @@ namespace MailProducer.Controllers
         [HttpGet("Test")]
         public IActionResult Test()
         {
+            _logger.LogInformation("Index action executed {date}", DateTime.UtcNow);
             return Ok();
         }
     }

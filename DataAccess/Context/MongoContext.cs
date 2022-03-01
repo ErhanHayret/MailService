@@ -49,7 +49,7 @@ namespace DataAccess.Context
             {
                 return;
             }
-            MongoClient = new MongoClient("mongodb://localhost:27017");
+            MongoClient = new MongoClient(Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING"));
             _database = MongoClient.GetDatabase("MailDb");
         }
 

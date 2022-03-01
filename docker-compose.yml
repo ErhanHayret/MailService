@@ -5,10 +5,22 @@ services:
       context: .
       dockerfile: Producer-Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
+      MONGO_CONNECTION_STRING: "mongodb://mongodb:27017"
+    container_name: producer
     ports:
-      - '30038:30038'
+      - '30030:80'
 
+  mailconsumer:
+    build:
+      dockerfile: Consumer-Dockerfile
+    environment:
+      MONGO_CONNECTION_STRING: "mongodb://mongodb:27017"
+    container_name: consumer
+    ports:
+      - 30050:80
+    restart: unless-stopped
+
+#RABBITMQ
   rabbitmq3:
     container_name: "rabbitmq"
     image: rabbitmq:3.8-management-alpine
@@ -21,23 +33,49 @@ services:
             # HTTP management UI
       - '15672:15672'
 
-  # mailconsumer:
-  #   build:
-  #     dockerfile: Consumer-Dockerfile
-  #   container_name: consumer
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: "Development"
-  #   ports:
-  #     - 30039:30039
+#MONGO
+  mongodb:
+    image: mongo
+    command: --replSet rs0
+    container_name: mongo
+    environment: 
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 27017:27017
+    restart: unless-stopped
 
-  # mongodb:
-  #   image: mongo
-  #   container_name: mongodb
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #   volumes:
-  #     - /C:/Data/db
-  #   ports:
-  #     - 27017:2017
-  #   restart: unless-stopped
+
+  elasticsearch:
+   container_name: elasticsearch
+   image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+   ports:
+    - 9200:9200
+   volumes:
+    - elasticsearch-data:/usr/share/elasticsearch/data
+   environment:
+    - xpack.monitoring.enabled=true
+    - xpack.watcher.enabled=false
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - discovery.type=single-node
+   networks:
+    - elastic
+
+  kibana:
+   container_name: kibana
+   image: docker.elastic.co/kibana/kibana:7.9.2
+   ports:
+    - 5601:5601
+   depends_on:
+    - elasticsearch
+   environment:
+    - ELASTICSEARCH_URL=http://localhost:9200
+   networks:
+    - elastic
+  
+networks:
+  elastic:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:

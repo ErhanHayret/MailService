@@ -1,7 +1,10 @@
 {
   "profiles": {
     "MailConsumer": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "environmentVariables": {
+        "MONGO_CONNECTION_STRING": "mongodb://127.0.0.1:27017"
+      }
     }
   }
 }

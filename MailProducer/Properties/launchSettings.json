@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -8,6 +7,7 @@
       "sslPort": 0
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -19,13 +19,13 @@
     },
     "MailProducer": {
       "commandName": "Project",
-      "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
+        "MONGO_CONNECTION_STRING": "mongodb://127.0.0.1:27017",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000",
-      "dotnetRunMessages": "true"
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost:30038"
     }
   }
 }

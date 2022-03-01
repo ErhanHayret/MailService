@@ -2,8 +2,6 @@
 using RabbitMQ.Client;
 using Newtonsoft.Json;
 using System.Text;
-using RabbitMQ.Client.Events;
-using System;
 
 namespace ProducerBusiniess.RabbitMQBusiniess
 {
@@ -20,7 +18,7 @@ namespace ProducerBusiniess.RabbitMQBusiniess
                 if (instance == null)
                 {
                     instance = new RabbitMQProduce();
-                    factory = new ConnectionFactory() { HostName = "localhost" };
+                    factory = new ConnectionFactory() { HostName = "rabbitmq", UserName = "root", Password = "root", Port = 5672 };
                     conn = factory.CreateConnection();
                     model = conn.CreateModel();
                     model.QueueDeclare(queue: "MailQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);

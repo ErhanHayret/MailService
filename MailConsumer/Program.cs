@@ -17,7 +17,6 @@ namespace MailConsumer
     {
         static void Main(string[] args)
         {
-            Task.Delay(20000).Wait();
             Mail mail = new Mail();
             RabbitMQProduce RMQ = RabbitMQProduce.Instance;
             EventingBasicConsumer consumer = new EventingBasicConsumer(RabbitMQProduce.model);
@@ -32,6 +31,7 @@ namespace MailConsumer
             };
             RabbitMQProduce.model.BasicConsume(queue: "MailQueue", autoAck: true, consumer: consumer);
             Console.ReadLine();
+            Task.Delay(20000).Wait();
         }
     }
 }
