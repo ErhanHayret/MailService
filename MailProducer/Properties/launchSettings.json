@@ -14,6 +14,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
+        "MONGO_CONNECTION_STRING": "mongodb://localhost:27017",
+        "ELASTIC_ENVIRONMENT": "http://localhost:9200/",
+        "RABBIT_HOSTNAME_ENVIRONMENT": "localhost",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -21,7 +24,9 @@
       "commandName": "Project",
       "launchUrl": "swagger",
       "environmentVariables": {
-        "MONGO_CONNECTION_STRING": "mongodb://127.0.0.1:27017",
+        "MONGO_CONNECTION_STRING": "mongodb://localhost:27017",
+        "ELASTIC_ENVIRONMENT": "http://localhost:9200",
+        "RABBIT_HOSTNAME_ENVIRONMENT": "localhost",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",

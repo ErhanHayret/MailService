@@ -13,19 +13,17 @@ namespace MailProducer
     {
         public static void Main(string[] args)
         {
-            //CreateHostBuilder(args).Build().Run();   //origin
-            ConfigureLogging();
-            CreateHost(args);
+            CreateHostBuilder(args).Build().Run();   //origin
         }
 
-        //public static IHostBuilder CreateHostBuilder(string[] args) =>    //origin
-        //    Host.CreateDefaultBuilder(args)
-        //        .ConfigureWebHostDefaults(webBuilder =>
-        //        {
-        //            webBuilder.UseStartup<Startup>();
-        //        });
+        public static IHostBuilder CreateHostBuilder(string[] args) =>    //origin
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
 
-        public static void ConfigureLogging()
+       /* public static void ConfigureLogging()
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");//Development
             var configuration = new ConfigurationBuilder()
@@ -40,10 +38,13 @@ namespace MailProducer
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
+            Log.Logger.Information("asdfgh");
         }
         private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
         {
-            return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
+            Console.WriteLine(new Uri(Environment.GetEnvironmentVariable("ELASTIC_ENVIRONMENT")).ToString());
+
+            return new ElasticsearchSinkOptions(new Uri(Environment.GetEnvironmentVariable("ELASTIC_ENVIRONMENT")))
             {
                 AutoRegisterTemplate = true,
                 IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
@@ -53,7 +54,7 @@ namespace MailProducer
         {
             try
             {
-                CreateHostBuilder(args).Build().Run();
+                //CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -72,6 +73,6 @@ namespace MailProducer
                     configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                     configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true);
                 })
-                .UseSerilog();
+                .UseSerilog();*/
     }
 }

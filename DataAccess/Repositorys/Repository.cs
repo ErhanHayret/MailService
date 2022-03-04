@@ -37,7 +37,7 @@ namespace DataAccess.Repositorys
             var obj = _dbSet.Find(filter).SingleOrDefault();
             return Task.FromResult(obj);
         }
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<List<T>> GetAll()
         {
             var all = await _dbSet.Find(_=>true).ToListAsync();
             return all.ToList();

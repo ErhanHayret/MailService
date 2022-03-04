@@ -1,8 +1,6 @@
 ﻿
 using ConsumerBusiniess.MailBusiness;
-using Data.Intefaces;
 using Data.Models;
-using DataAccess.Repositorys;
 using Newtonsoft.Json;
 using ProducerBusiniess.RabbitMQBusiniess;
 using RabbitMQ.Client;
@@ -17,8 +15,9 @@ namespace MailConsumer
     {
         static void Main(string[] args)
         {
+            Task.Delay(20000).Wait();
             Mail mail = new Mail();
-            RabbitMQProduce RMQ = RabbitMQProduce.Instance;
+            //RabbitMQProduce RMQ = RabbitMQProduce.Instance;
             EventingBasicConsumer consumer = new EventingBasicConsumer(RabbitMQProduce.model);
             consumer.Received += (model, ea) =>
             {
@@ -31,7 +30,6 @@ namespace MailConsumer
             };
             RabbitMQProduce.model.BasicConsume(queue: "MailQueue", autoAck: true, consumer: consumer);
             Console.ReadLine();
-            Task.Delay(20000).Wait();
         }
     }
 }

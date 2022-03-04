@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
-EXPOSE 30038
+EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
@@ -10,6 +10,7 @@ COPY ["MailProducer/MailProducer.csproj", "MailProducer/"]
 COPY ["ProducerBusiniess/ProducerBusiniess.csproj", "ProducerBusiniess/"]
 COPY ["Data/Data.csproj", "Data/"]
 COPY ["DataAccess/DataAccess.csproj", "DataAccess/"]
+COPY ["Utils/Utils.csproj", "Utils/"]
 RUN dotnet restore "MailProducer/MailProducer.csproj"
 COPY . .
 WORKDIR "/src/MailProducer"

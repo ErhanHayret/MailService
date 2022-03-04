@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using Newtonsoft.Json;
 using System.Text;
+using System;
 
 namespace ProducerBusiniess.RabbitMQBusiniess
 {
@@ -15,10 +16,17 @@ namespace ProducerBusiniess.RabbitMQBusiniess
         {
             get
             {
+                //Console.WriteLine(Environment.GetEnvironmentVariable("ELASTIC_ENVIRONMENT"));
                 if (instance == null)
                 {
                     instance = new RabbitMQProduce();
-                    factory = new ConnectionFactory() { HostName = "rabbitmq", UserName = "root", Password = "root", Port = 5672 };
+                    factory = new ConnectionFactory() 
+                    { 
+                        HostName = "rabbitmq", 
+                        UserName = "root", 
+                        Password = "root", 
+                        Port = 5672 
+                    };
                     conn = factory.CreateConnection();
                     model = conn.CreateModel();
                     model.QueueDeclare(queue: "MailQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);

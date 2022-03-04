@@ -1,53 +1,67 @@
 version: '3.8'
 services:
+  #MAILPRODUCER
   mailproducer:
+    container_name: producer
     build:
       context: .
       dockerfile: Producer-Dockerfile
     environment:
-      MONGO_CONNECTION_STRING: "mongodb://mongodb:27017"
-    container_name: producer
+      ASPNETCORE_ENVIRONMENT: "Development"
+      MONGO_CONNECTION_STRING: "mongodb://mongo:27017"
+      RABBIT_HOSTNAME_ENVIRONMENT: "rabbitmq"
+      ELASTIC_ENVIRONMENT: "http://elasticsearch:9200/"
     ports:
       - '30030:80'
+    networks:
+      - elastics
 
+ #MAIL CONSUMER
   mailconsumer:
+    container_name: consumer
     build:
       dockerfile: Consumer-Dockerfile
     environment:
-      MONGO_CONNECTION_STRING: "mongodb://mongodb:27017"
-    container_name: consumer
+      MONGO_CONNECTION_STRING: "mongodb://mongo:27017"
+      RABBIT_HOSTNAME_ENVIRONMENT: "rabbitmq"
+      ELASTIC_ENVIRONMENT: "http://elasticsearch:9200/"
     ports:
       - 30050:80
     restart: unless-stopped
+    networks:
+      - elastics
 
-#RABBITMQ
-  rabbitmq3:
+  #RABBITMQ
+  rabbitmq:
     container_name: "rabbitmq"
     image: rabbitmq:3.8-management-alpine
     environment:
       - RABBITMQ_DEFAULT_USER=root
       - RABBITMQ_DEFAULT_PASS=root
     ports:
-            # AMQP protocol port
-      - '5672:5672'
-            # HTTP management UI
+      # AMQP protocol port
+      - '5672:5672' 
+      # HTTP management UI
       - '15672:15672'
+    networks:
+      - elastics
 
-#MONGO
+  #MONGO
   mongodb:
+    container_name: "mongo"
     image: mongo
     command: --replSet rs0
-    container_name: mongo
-    environment: 
+    environment:
       - PUID=1000
       - PGID=1000
     ports:
       - 27017:27017
     restart: unless-stopped
-
-
+    networks:
+      - elastics
+    
+  #ELASTIC
   elasticsearch:
-   container_name: elasticsearch
    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
    ports:
     - 9200:9200
@@ -59,23 +73,56 @@ services:
     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     - discovery.type=single-node
    networks:
-    - elastic
+    - elastics
 
+  #KIBANA
   kibana:
-   container_name: kibana
    image: docker.elastic.co/kibana/kibana:7.9.2
    ports:
     - 5601:5601
    depends_on:
     - elasticsearch
    environment:
-    - ELASTICSEARCH_URL=http://localhost:9200
+    - ELASTICSEARCH_URL=http://elasticsearch:9200/
    networks:
-    - elastic
-  
+    - elastics
+
 networks:
-  elastic:
+  elastics:
     driver: bridge
 
 volumes:
   elasticsearch-data:
+
+  # elasticsearch:
+  #  container_name: elasticsearch
+  #  image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+  #  ports:
+  #   - 9200:9200
+  #  volumes:
+  #   - elasticsearch-data:/usr/share/elasticsearch/data
+  #  environment:
+  #   - xpack.monitoring.enabled=true
+  #   - xpack.watcher.enabled=false
+  #   - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   - discovery.type=single-node
+  #  networks:
+  #   - elastic
+
+  # kibana:
+  #  container_name: kibana
+  #  image: docker.elastic.co/kibana/kibana:7.11.0
+  #  ports:
+  #   - 5601:5601
+  #  depends_on:
+  #   - elasticsearch
+  #  environment:
+  #   - ELASTICSEARCH_URL=http://localhost:9200
+  #  networks:
+  #   - elastic
+
+  # networks:
+  #   elastic:
+  #     driver: bridge
+
+

@@ -9,11 +9,14 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Utils.ElasticLogger;
 
 namespace ConsumerBusiniess.MailBusiness
 {
     public class ConsumerSendMailBusiness
     {
+        
         public void SendMail(Mail mail)
         { 
             using MimeMessage email = new MimeMessage();
@@ -23,8 +26,9 @@ namespace ConsumerBusiniess.MailBusiness
             email.Body = new TextPart(TextFormat.Plain) { Text = mail.MailText };
             using SmtpClient smtp = new SmtpClient();
             smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("erhan.necati@gmail.com", "erhan41245642266hayret");
+            smtp.Authenticate(mail.SenderEmail, mail.Password);
             smtp.Send(email);
+            MyLogger.Logger.Information("Mail is sended");
             smtp.Disconnect(true);
         }
     }

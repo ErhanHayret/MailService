@@ -9,21 +9,23 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MailProducer.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class MailController : ControllerBase
     {
-        ILogger<MailController> _logger;
+        private readonly ILogger<MailController> _logger;
         public MailController(ILogger<MailController> logger)
         {
             _logger = logger;
         }
 
         [HttpGet("GetMail")]
-        public Task<IEnumerable<MailDto>> GetMail()
+        public Task<List<MailDto>> GetMail()
         {
             IMongoContext context = new MongoContext();
             IRepository<MailDto> _repository = new Repository<MailDto>(context);
@@ -49,7 +51,16 @@ namespace MailProducer.Controllers
         [HttpGet("Test")]
         public IActionResult Test()
         {
-            _logger.LogInformation("Index action executed {date}", DateTime.UtcNow);
+            try
+            {
+                _logger.LogInformation("Yasin");
+                //throw new Exception("Error!");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Test Error!");
+            }
+            
             return Ok();
         }
     }

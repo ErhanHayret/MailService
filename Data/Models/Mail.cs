@@ -9,5 +9,6 @@ namespace Data.Models
         public string MailText { get; set; }
         public string SenderEmail { get; set; }
         public string ArriveEmail { get; set; }
+        public string Password { get; set; }
     }
 }
